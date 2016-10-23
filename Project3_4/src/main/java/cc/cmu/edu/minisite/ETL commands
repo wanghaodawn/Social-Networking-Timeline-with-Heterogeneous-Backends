@@ -1,0 +1,42 @@
+
+MySQL:
+
+mysql -h whdawndb.c7u3dedbqnqt.us-east-1.rds.amazonaws.com -u root -p15619p34
+
+mysql --local-infile -h whdawndb2.c7u3dedbqnqt.us-east-1.rds.amazonaws.com -u root -p15619p34 whdawndb2
+
+mysql --local-infile -h whdawndb2.c7u3dedbqnqt.us-east-1.rds.amazonaws.com -u root -p15619p34 whdawndb2 < create_tables.sql
+
+LOAD DATA LOCAL INFILE '/home/ubuntu/users.csv' INTO TABLE users FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n';
+LOAD DATA LOCAL INFILE '/home/ubuntu/userinfo.csv' INTO TABLE userinfo FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n';
+
+
+
+HBase:
+
+hbase shell
+create 'linkdata', 'data'
+describe 'linkdata'
+exit
+
+hadoop fs -mkdir /Project3_4/
+hadoop fs -put output2.csv /Project3_4/
+hadoop fs -ls /Project3_4/
+
+hbase org.apache.hadoop.hbase.mapreduce.ImportTsv '-Dimporttsv.separator=,' -Dimporttsv.columns="HBASE_ROW_KEY,data:link" -Dimporttsv.bulk.outputHbase="/Project3_4/storeOutput" linkdata /Project3_4/output2.csv
+
+hbase org.apache.hadoop.hbase.mapreduce.ImportTsv '-Dimporttsv.separator=,' -Dimporttsv.columns="HBASE_ROW_KEY,data:followee" -Dimporttsv.bulk.outputHbase="/Project3_4/storeOutput" followeedata /Project3_4/followee.csv
+
+hbase shell
+scan 'linkdata'
+
+
+
+MongoDB:
+
+mongod
+
+mongo
+
+mongoimport --db test --collection posts --drop --file posts.json
+
